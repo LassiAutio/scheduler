@@ -1,0 +1,20 @@
+Team
+Team has name
+Team has games
+Team belongs to some Serie
+Team has wishies for games
+
+Serie
+Serie has name
+Serie has games
+Serie has teams
+Serien has game types (single, DH, tournament, play offs)
+
+Game
+Game has two teams
+Game has date and time
+Game belongs to serie
+Game has place
+
+Sports League Scheduling Problem = SLSP
+round-robin schedule
