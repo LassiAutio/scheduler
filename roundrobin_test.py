@@ -52,9 +52,16 @@ class TestRoundRobin(unittest.TestCase):
         self.assertEqual( robin.getDaysInSeason(), 32)
     
     def testGetAvgDaysBetweenGames(self):
-        self.assertEqual( roundrobin.getAvgDaysBetweenGames(30, 30), 1 )
-        self.assertEqual( roundrobin.getAvgDaysBetweenGames(15, 30), 2 )
-        self.assertEqual( roundrobin.getAvgDaysBetweenGames(2, 30), 30 )
+        games = 5
+        days = 5
+        self.assertEqual( roundrobin.getAvgDaysBetweenGames(games, days), 1 )
+        days = 13
+        games = 7
+        self.assertEqual( roundrobin.getAvgDaysBetweenGames(games, days), 2 )
+        games = 5
+        self.assertEqual( roundrobin.getAvgDaysBetweenGames(games, days), 3 )
+        days = 14
+        self.assertEqual( roundrobin.getAvgDaysBetweenGames(games, days), 3 )
 
 if __name__ == '__main__':
     unittest.main()

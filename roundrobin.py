@@ -1,5 +1,6 @@
 import string
 import datetime
+import math
 from game import Game
 
 '''
@@ -15,6 +16,7 @@ class RoundRobin(object):
         self.date_start = date_start
         self.date_end = date_end
         self.current_round = 0
+        self.current_day = date_start
     
     def getRound(self):
         games = []
@@ -22,11 +24,16 @@ class RoundRobin(object):
         home_away_index = self.current_round // (teams_count-1)
         for i in range(0, teams_count, 2):
             if home_away_index%2 == 0:
-                game = Game( self.teams[i], self.teams[i+1] )
+                game = Game( self.teams[i], self.teams[i+1], self.current_day )
             else:
-                game = Game( self.teams[i+1], self.teams[i] )
+                game = Game( self.teams[i+1], self.teams[i], self.current_day )
             games.append( game )
+            self.nextGameDay()
         return games
+    
+    def nextGameDay(self):
+        days_between = self.getAvgDaysBetweenGames()
+        self.current_day += datetime.timedelta(days=days_between)
     
     def getNextRound(self):
         self.rotate()
@@ -68,9 +75,7 @@ class RoundRobin(object):
         return (self.date_end - self.date_start).days + 1
     
     def getAvgDaysBetweenGames(self):
-        days = self.getDaysInSeason()
-        games = self.getGameCount()
-        return float(games) / (days-1)
+        return getAvgDaysBetweenGames(self.getGameCount(), self.getDaysInSeason())
     
     def getGameCount(self):
         return getGameCount(len(self.teams), self.rounds_count)
@@ -89,5 +94,8 @@ def getGameCount(teams_count, rounds_count):
     assert(rounds_count>=1)
     return getGameCountOneRound(teams_count) * rounds_count
 
+# Returns how many days there would be between each games if they are separated evenly.
 def getAvgDaysBetweenGames(games_count, days_count):
-    return float(days_count) / (games_count-1)
+    x = days_count - games_count
+    divider = games_count-1
+    return math.floor( (float(x) / divider)+1 )
