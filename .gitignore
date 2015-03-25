@@ -1,2 +1,5 @@
 # ignore .c9 folder
 .c9/
+
+# ignore Python's byte code files
+*.pyc
