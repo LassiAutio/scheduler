@@ -1,6 +1,7 @@
 import roundrobin
 import unittest
 import datetime
+import re    # regular expression
 
 # Unit test class for RoundRobin-class
 class TestRoundRobin(unittest.TestCase):
@@ -14,10 +15,9 @@ class TestRoundRobin(unittest.TestCase):
     
     def testGetRound(self):
         robin = roundrobin.RoundRobin(6)
-        games = robin.getRound()
-        self.assertEqual( str(games[0]), "A vs B")
-        self.assertEqual( str(games[1]), "C vs D")
-        self.assertEqual( str(games[2]), "E vs F")
+        games = robin.getGameRound()
+        for game in games:
+            self.assertIsNotNone(re.match(r'^\d{4}-\d{2}-\d{2}: \w+ vs \w+$', str(game)))
     
     def testGetSchedule(self):
         teams_count = 4
@@ -41,9 +41,9 @@ class TestRoundRobin(unittest.TestCase):
         self.assertEqual( roundrobin.getGameCountOneRound(4), 6 )
         self.assertEqual( roundrobin.getGameCountOneRound(6), 15 )
     
-    def testGetGameCount(self):
-        self.assertEqual( roundrobin.getGameCount(4, 2), 12 )
-        self.assertEqual( roundrobin.getGameCount(6, 3), 45 )
+    def testGetGamesCount(self):
+        self.assertEqual( roundrobin.getGamesCount(4, 2), 12 )
+        self.assertEqual( roundrobin.getGamesCount(6, 3), 45 )
     
     def testGetDaysInSeason(self):
         robin = roundrobin.RoundRobin(6, 2, datetime.date(2015, 5, 1), datetime.date(2015, 5, 2))
