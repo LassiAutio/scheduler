@@ -99,3 +99,7 @@ def getAvgDaysBetweenGames(games_count, days_count):
     x = days_count - games_count
     divider = games_count-1
     return math.floor( (float(x) / divider)+1 )
+
+if __name__ == '__main__':
+    robin = RoundRobin(5)
+    robin.printSchedule()
