@@ -8,4 +8,4 @@ class Game(object):
     
     # this is what will be printed when object is printed like "print object"
     def __str__(self):
-        return str(self.date) + ": " + self.team_home + " vs " + self.team_away
+        return self.team_home + " vs " + self.team_away

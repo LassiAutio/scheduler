@@ -12,15 +12,15 @@ class RoundRobin(object):
         assert(teams_count>=3)
         assert(rounds_count>=1)
         self.teams = generateTeams(teams_count)
-        self.rounds_count = rounds_count
         self.date_start = date_start
         self.date_end = date_end
-        self.current_game_round = 0
-        self.current_day = date_start
-        self.current_game = -1
+        self.rounds_count = rounds_count
     
     def getGamesCountOneRound(self):
         return getGamesCountOneRound(len(self.teams))
+    
+    def getGamesCount(self):
+        return getGamesCount(len(self.teams), self.rounds_count)
     
     def getDaysInSeason(self):
         return (self.date_end - self.date_start).days + 1
@@ -28,14 +28,16 @@ class RoundRobin(object):
     def getAvgDaysBetweenGames(self):
         return getAvgDaysBetweenGames(self.getGamesCount(), self.getDaysInSeason())
     
-    def getGamesCount(self):
-        return getGamesCount(len(self.teams), self.rounds_count)
+    def getSchedule(self):
+        reverse = False
+        schedule = []
+        for i in range(self.rounds_count):
+            schedule.extend( getSchedule(self.teams, reverse) )
+            reverse = (not reverse)
     
 def generateTeams(teams_count):
-    teams = list(string.ascii_uppercase)[:teams_count]
-    if teams_count%2 != 0:
-        teams.append(None)
-    return teams
+    assert(teams_count>=3)
+    return list(string.ascii_uppercase)[:teams_count]
 
 def getGamesCountOneRound(teams_count):
     assert(teams_count>=3)
@@ -51,16 +53,22 @@ def getAvgDaysBetweenGames(games_count, days_count):
     divider = games_count-1
     return math.floor( (float(x) / divider)+1 )
 
-def getRoundRobin(teams_count):
-    teams = generateTeams(teams_count)
+def getRoundRobin(teams, reverse_home_away=False):
+    if len(teams)%2 != 0 :
+        teams.append(None)
     half = len(teams) / 2
     schedule = []
     for turn in range(len(teams)-1):
         for i in range(half):
             home = teams[i]
             away = teams[len(teams)-i-1]
+            if reverse_home_away == True:
+                temp = home
+                home = away
+                away = temp
             if (home != None) and (away != None):
-                schedule.append( str(home) + " vs " + str(away) )
+                game = Game(home, away)
+                schedule.append( game )
         last_team = teams.pop()
         teams.insert(1, last_team)
     return schedule

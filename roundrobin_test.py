@@ -8,6 +8,7 @@ class TestRoundRobin(unittest.TestCase):
     
     def testGetGamesCountOneRound(self):
         self.assertEqual( roundrobin.getGamesCountOneRound(4), 6 )
+        self.assertEqual( roundrobin.getGamesCountOneRound(5), 10 )
         self.assertEqual( roundrobin.getGamesCountOneRound(6), 15 )
     
     def testGetGamesCount(self):
@@ -33,13 +34,22 @@ class TestRoundRobin(unittest.TestCase):
         self.assertEqual( roundrobin.getAvgDaysBetweenGames(games, days), 3 )
     
     def testGetRoundRobin(self):
-        schedule = roundrobin.getRoundRobin(4)
-        self.assertEqual(schedule[0], "A vs D")
-        self.assertEqual(schedule[1], "B vs C")
-        self.assertEqual(schedule[2], "A vs C")
-        self.assertEqual(schedule[3], "D vs B")
-        self.assertEqual(schedule[4], "A vs B")
-        self.assertEqual(schedule[5], "C vs D")
+        teams = roundrobin.generateTeams(4)
+        schedule = roundrobin.getRoundRobin(teams)
+        self.assertEqual(str(schedule[0]), "A vs D")
+        self.assertEqual(str(schedule[1]), "B vs C")
+        self.assertEqual(str(schedule[2]), "A vs C")
+        self.assertEqual(str(schedule[3]), "D vs B")
+        self.assertEqual(str(schedule[4]), "A vs B")
+        self.assertEqual(str(schedule[5]), "C vs D")
+        
+        schedule_switched = roundrobin.getRoundRobin(teams, True)
+        self.assertEqual(str(schedule_switched[0]), "D vs A")
+        self.assertEqual(str(schedule_switched[1]), "C vs B")
+        self.assertEqual(str(schedule_switched[2]), "C vs A")
+        self.assertEqual(str(schedule_switched[3]), "B vs D")
+        self.assertEqual(str(schedule_switched[4]), "B vs A")
+        self.assertEqual(str(schedule_switched[5]), "D vs C")
 
 if __name__ == '__main__':
     unittest.main()
