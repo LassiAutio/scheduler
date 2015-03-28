@@ -12,9 +12,14 @@ class RoundRobin(object):
         assert(teams_count>=3)
         assert(rounds_count>=1)
         self.teams = generateTeams(teams_count)
+        if len(self.teams)%2 != 0:
+            self.teams.append(None)
         self.date_start = date_start
         self.date_end = date_end
+        self.date_current = None
         self.rounds_count = rounds_count
+        self.reverse_home_away = False
+        self.schedule = []
     
     def getGamesCountOneRound(self):
         return getGamesCountOneRound(len(self.teams))
@@ -28,12 +33,42 @@ class RoundRobin(object):
     def getAvgDaysBetweenGames(self):
         return getAvgDaysBetweenGames(self.getGamesCount(), self.getDaysInSeason())
     
-    def getSchedule(self):
-        reverse = False
-        schedule = []
+    def generateSchedule(self):
+        self.schedule = []
         for i in range(self.rounds_count):
-            schedule.extend( getSchedule(self.teams, reverse) )
-            reverse = (not reverse)
+            self.schedule.extend( self.getNextRoundRobin() )
+    
+    
+    def getSchedule(self):
+        if self.schedule == []:
+            self.generateSchedule()
+        return self.schedule
+    
+    def getNextRoundRobin(self):
+        half = len(self.teams) / 2
+        schedule = []
+        for turn in range(len(self.teams)-1):
+            for i in range(half):
+                home = self.teams[i]
+                away = self.teams[len(self.teams)-i-1]
+                if self.reverse_home_away == True:
+                    temp = home
+                    home = away
+                    away = temp
+                if (home != None) and (away != None):
+                    game = Game(home, away, self.getNextDate() )
+                    schedule.append( game )
+            last_team = self.teams.pop()
+            self.teams.insert(1, last_team)
+        self.reverse_home_away = not self.reverse_home_away
+        return schedule
+    
+    def getNextDate(self):
+        if self.date_current == None:
+            self.date_current = self.date_start
+        else:
+            self.date_current += datetime.timedelta(days = self.getAvgDaysBetweenGames()+1 )
+        return self.date_current
     
 def generateTeams(teams_count):
     assert(teams_count>=3)
