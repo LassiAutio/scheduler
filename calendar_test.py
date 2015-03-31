@@ -44,6 +44,13 @@ class TestCalendar(unittest.TestCase):
     def testGetMidsummer(self):
         self.assertEqual( calendar.GetMidsummer(2015), datetime.date(2015, 6, 20) )
         self.assertEqual( calendar.GetMidsummer(2016), datetime.date(2016, 6, 25) )
+    
+    def testIsInMidsummerDays(self):
+        self.assertFalse( calendar.IsInMidsummerDays( datetime.date(2015, 6, 16) ) )
+        self.assertTrue( calendar.IsInMidsummerDays( datetime.date(2015, 6, 17) ) )
+        self.assertTrue( calendar.IsInMidsummerDays( datetime.date(2015, 6, 22) ) )
+        self.assertFalse( calendar.IsInMidsummerDays( datetime.date(2015, 6, 23) ) )
+        self.assertTrue( calendar.IsInMidsummerDays( calendar.GetMidsummer(2020) ) )
 
 if __name__ == '__main__':
     unittest.main()

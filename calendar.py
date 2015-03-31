@@ -7,7 +7,7 @@ def IsSpecialDay(date):
         return True
     elif IsAscensionThursday(date):
         return True
-    elif IsMidSummer(date):
+    elif IsInMidsummerDays(date):
         return True
     else:
         return False
@@ -68,5 +68,14 @@ def GetMidsummer(year):
             break
     return date
 
-def IsMidSummer(date):
+def IsMidsummer(date):
     return date == GetMidsummer(date.year)
+
+def IsInMidsummerDays(date, days_before=3, days_after=2):
+    midsummer = GetMidsummer(date.year)
+    pre_midsummer = midsummer - datetime.timedelta(days = days_before)
+    post_midsummer = midsummer + datetime.timedelta(days = days_after)
+    if date<pre_midsummer or date>post_midsummer:
+        return False
+    else:
+        return True
