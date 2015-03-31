@@ -35,13 +35,14 @@ class TestRoundRobin(unittest.TestCase):
     
     def testGetSchedule(self):
         date_start = datetime.date(2015, 5, 1)
-        date_end = datetime.date(2015, 5, 20)
+        date_end = datetime.date(2015, 5, 21)
         robin = roundrobin.RoundRobin(5, 2, date_start, date_end)
         schedule = robin.getSchedule()
         
         self.assertEqual(len(schedule), 20)
         
         self.assertEqual( schedule[0].date, date_start )
+        # One game day is Mothers' day
         self.assertEqual( schedule[19].date, date_end )
         
         self.assertEqual(str(schedule[0]), "B vs E")

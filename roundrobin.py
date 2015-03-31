@@ -1,6 +1,7 @@
 import string
 import datetime
 import math
+import calendar
 from game import Game
 
 '''
@@ -8,7 +9,7 @@ Generates Round-robin schedule for given number of teams and round.
 '''
 class RoundRobin(object):
     
-    def __init__(self, teams_count, rounds_count=2, date_start = datetime.date(2015, 5, 4), date_end = datetime.date(2015, 8, 14)):
+    def __init__(self, teams_count, rounds_count=2, date_start = datetime.date(2015, 5, 12), date_end = datetime.date(2015, 8, 14)):
         assert(teams_count>=3)
         assert(rounds_count>=1)
         self.teams = generateTeams(teams_count)
@@ -72,6 +73,9 @@ class RoundRobin(object):
             self.date_current = self.date_start
         else:
             self.date_current += datetime.timedelta(days = self.getAvgDaysBetweenGames()+1 )
+        #
+        while calendar.IsSpecialDay(self.date_current):
+            self.date_current += datetime.timedelta(days = 1)
         return self.date_current
     
 def generateTeams(teams_count):
