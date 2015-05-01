@@ -9,23 +9,45 @@ Generates Suomi-sarja schedule for given number of teams and rounds.
 '''
 class SuomiSarja(object):
     
-    def __init__(self, teams_div_a, teams_div_b, rounds_count_division=3, rounds_count_inter=2, date_start = datetime.date(2015, 5, 9), date_end = datetime.date(2015, 8, 16)):
+    def __init__(self, teams, rounds):
         
-        assert(len(teams_div_a) >= 3)
-        assert(len(teams_div_b) >= 3)
-        assert(rounds_count_division >= rounds_count_inter)
-        assert(rounds_count_division >= 1)
-        assert(rounds_count_inter >= 1)
+        assert(len(teams) >= 3)
+        assert(rounds >= 1)
         
-        self.teams_div_a = teams_div_a
-        self.teams_div_b = teams_div_b
-        self.date_start = date_start
-        self.date_end = date_end
-        self.date_current = None
-        self.rounds_count_inter = rounds_count_inter
-        self.rounds_count_division = rounds_count_division
-        #self.reverse_home_away = False
+        self.teams = teams
+        self.rounds_count = rounds
+        
+        self.reverse_home_away = False
         self.schedule = []
+    
+    def printSchedule(self):
+        self.generateSchedule()
+        for game in self.schedule:
+            print game
+    
+    def generateSchedule(self):
+        self.schedule = []
+        for i in range(self.rounds_count):
+            self.schedule.extend( self.getNextRoundRobin() )
+    
+    def getNextRoundRobin(self):
+        half = len(self.teams) / 2
+        schedule = []
+        for turn in range(len(self.teams)-1):
+            for i in range(half):
+                home = self.teams[i]
+                away = self.teams[len(self.teams)-i-1]
+                if self.reverse_home_away == True:
+                    temp = home
+                    home = away
+                    away = temp
+                if (home != None) and (away != None):
+                    game = Game(home, away)
+                    schedule.append(game)
+            last_team = self.teams.pop()
+            self.teams.insert(1, last_team)
+        self.reverse_home_away = not self.reverse_home_away
+        return schedule
     
     def getGamesCountOneRound(self):
         return getGamesCountOneRound( self.getTeamsCount() )
@@ -49,39 +71,10 @@ class SuomiSarja(object):
     def getAvgDaysBetweenGames(self):
         return getAvgDaysBetweenGames(self.getGamesCount(), self.getDaysInSeason())
     
-    def generateSchedule(self):
-        self.schedule = []
-        for i in range(self.rounds_count):
-            self.schedule.extend( self.getNextRoundRobin() )
-    
     def getSchedule(self):
         if self.schedule == []:
             self.generateSchedule()
         return self.schedule
-    
-    def printSchedule(self):
-        self.generateSchedule()
-        for game in self.schedule:
-            print game.printGame()
-    
-    def getNextRoundRobin(self):
-        half = len(self.teams) / 2
-        schedule = []
-        for turn in range(len(self.teams)-1):
-            for i in range(half):
-                home = self.teams[i]
-                away = self.teams[len(self.teams)-i-1]
-                if self.reverse_home_away == True:
-                    temp = home
-                    home = away
-                    away = temp
-                if (home != None) and (away != None):
-                    game = Game(home, away, self.getNextDate() )
-                    schedule.append( game )
-            last_team = self.teams.pop()
-            self.teams.insert(1, last_team)
-        self.reverse_home_away = not self.reverse_home_away
-        return schedule
     
     def getNextDate(self):
         if self.date_current == None:
@@ -132,5 +125,5 @@ def getRoundRobin(teams, reverse_home_away=False):
     return schedule
 
 if __name__ == '__main__':
-    robin = SuomiSarja(6, 4)
+    robin = SuomiSarja(generateTeams(6), 2)
     robin.printSchedule()
